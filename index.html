@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal & Assault | Réseau d'Intelligence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+        
+        :root {
+            --bg-base: #030305;
+            --panel-bg: rgba(14, 14, 18, 0.6);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --accent-gold: #d4af37;
+            --accent-discord: #5865F2;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-base);
+            color: #d1d5db;
+            /* Motif de fond tactique (Grid) */
+            background-image: 
+                linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 32px 32px;
+            background-attachment: fixed;
+        }
+        
+        .font-cinzel { font-family: 'Cinzel', serif; }
+        .font-mono-custom { font-family: 'JetBrains Mono', monospace; }
+        
+        /* Composants UI Premium */
+        .glass-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .map-card {
+            background: linear-gradient(180deg, rgba(20,20,25,0.8) 0%, rgba(10,10,14,0.9) 100%);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .map-card:hover {
+            border-color: rgba(212, 175, 55, 0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.8), inset 0 0 20px rgba(212, 175, 55, 0.05);
+        }
+
+        .tier-btn.active, .chest-btn.active {
+            background-color: #27272a;
+            color: white;
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+
+        /* Scrollbar furtive */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-gold); }
+
+        /* Animation Pulse pour l'alerte */
+        @keyframes radar-ping {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+        .ping-ring {
+            position: absolute;
+            width: 100%; height: 100%;
+            background-color: #ef4444;
+            border-radius: 50%;
+            animation: radar-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-[#d4af37]/30 selection:text-white min-h-screen flex flex-col">
+
+    <header class="glass-panel sticky top-0 z-40 border-b-0 border-b border-white/5 shadow-2xl">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <img src="./Portal & Assault.png" alt="Portal & Assault Logo" class="w-10 h-10 rounded-lg object-cover border border-white/10 shadow-lg" onerror="this.style.display='none'">
+                <div>
+                    <h1 class="font-cinzel text-lg md:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400 tracking-wider">PORTAL & ASSAULT</h1>
+                    <div class="text-[9px] uppercase tracking-[0.25em] text-gray-500 font-mono-custom mt-0.5 font-semibold">// BASE DE DONNÉES AVALON</div>
+                </div>
+            </div>
+            <div class="hidden sm:flex items-center gap-3 bg-black/40 px-3 py-1.5 rounded-full border border-white/5">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </span>
+                <span class="text-[10px] font-mono-custom text-gray-400 uppercase tracking-widest">Système Opérationnel</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl mx-auto px-6 py-8 w-full flex flex-col gap-8">
+        
+        <div class="glass-panel rounded-2xl relative overflow-hidden flex flex-col md:flex-row items-center group">
+            <div class="absolute -inset-24 bg-gradient-to-r from-[#5865F2]/20 via-transparent to-transparent opacity-50 blur-3xl group-hover:opacity-80 transition-opacity duration-700 pointer-events-none"></div>
+            
+            <div class="p-6 md:p-8 flex-1 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6 w-full z-10">
+                <div class="shrink-0 relative">
+                    <div class="absolute inset-0 bg-black/50 rounded-2xl blur-md -z-10 translate-y-2"></div>
+                    <img src="./Portal & Assault.png" alt="Logo Discord" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-2xl border border-white/10 shadow-[0_0_30px_rgba(88,101,242,0.3)] transition-transform duration-500 group-hover:scale-105" onerror="this.src='https://placehold.co/100x100/1e1e24/5865F2?text=P%26A'">
+                </div>
+                
+                <div class="flex flex-col justify-center h-full">
+                    <div class="flex items-center gap-2 justify-center sm:justify-start mb-2.5">
+                        <div class="relative w-2 h-2">
+                            <div class="ping-ring"></div>
+                            <div class="absolute inset-0 bg-red-500 rounded-full"></div>
+                        </div>
+                        <span class="text-[10px] font-mono-custom font-bold tracking-widest text-red-400 uppercase">Synchronisation Faction</span>
+                    </div>
+                    <h2 class="text-xl md:text-2xl font-cinzel font-bold text-white mb-2">Assauts des Bandits</h2>
+                    <p class="text-sm text-gray-400 max-w-2xl leading-relaxed">
+                        Recevez les pings instantanés et précis des assauts de bandits en direct, en rejoignant le discord.
+                    </p>
+                </div>
+            </div>
+
+            <div class="p-6 md:p-8 w-full md:w-auto flex items-center justify-center border-t md:border-t-0 md:border-l border-white/5 bg-black/20 backdrop-blur-sm z-10">
+                <a href="https://discord.gg/StbxkwJRS7" target="_blank" class="flex items-center justify-center w-full md:w-auto gap-3 px-8 py-4 bg-[#5865F2] hover:bg-[#4752C4] text-white text-sm font-semibold rounded-xl transition-all shadow-[0_0_20px_rgba(88,101,242,0.2)] hover:shadow-[0_0_30px_rgba(88,101,242,0.4)] hover:-translate-y-0.5 active:translate-y-0">
+                    <svg class="w-6 h-6 fill-current" viewBox="0 0 127.14 96.36"><path d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a74.37,74.37,0,0,0,6.72-10.93,68.6,68.6,0,0,1-10.64-5.12c.91-.67,1.81-1.37,2.67-2.1a75.22,75.22,0,0,0,92.82,0c.86.73,1.76,1.43,2.67,2.1a68.86,68.86,0,0,1-10.64,5.12,74.74,74.74,0,0,0,6.72,10.93,105.73,105.73,0,0,0,31.05-18.83C129.87,50.2,123.75,27.34,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.83,46,53.83,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.07,46,96.07,53,91,65.69,84.69,65.69Z"/></svg>
+                    <span>Rejoindre Portal & Assault</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="glass-panel rounded-2xl p-4 flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6 shadow-lg z-20">
+            
+            <div class="relative w-full xl:w-96 group">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-500 group-focus-within:text-[#d4af37] transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+                <input type="text" id="searchBar" placeholder="Ex: Casitos-Alieam..." class="w-full bg-black/40 border border-white/10 text-gray-200 text-sm pl-12 pr-4 py-3 rounded-xl focus:outline-none focus:border-[#d4af37]/50 focus:bg-black/60 transition-all font-mono-custom placeholder-gray-600 shadow-inner">
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-6 w-full xl:w-auto">
+                
+                <div class="flex flex-col gap-2">
+                    <span class="text-[9px] text-gray-500 uppercase tracking-widest font-mono-custom font-bold ml-1">Filtre de Niveau</span>
+                    <div class="flex bg-black/40 border border-white/10 p-1 rounded-xl" id="tierFilters">
+                        <button data-tier="all" class="tier-btn active text-gray-400 px-4 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer">TOUT</button>
+                        <button data-tier="4" class="tier-btn text-gray-400 hover:text-white hover:bg-white/5 px-4 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer">T4</button>
+                        <button data-tier="6" class="tier-btn text-gray-400 hover:text-white hover:bg-white/5 px-4 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer">T6</button>
+                        <button data-tier="7" class="tier-btn text-gray-400 hover:text-white hover:bg-white/5 px-4 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer">T7</button>
+                        <button data-tier="8" class="tier-btn text-gray-400 hover:text-white hover:bg-white/5 px-4 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer">T8</button>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <span class="text-[9px] text-gray-500 uppercase tracking-widest font-mono-custom font-bold ml-1">Cibles Stratégiques</span>
+                    <div class="flex bg-black/40 border border-white/10 p-1 rounded-xl" id="chestFilters">
+                        <button data-chest="all" class="chest-btn active text-gray-400 px-4 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer">TOUT</button>
+                        <button data-chest="GREEN" class="chest-btn text-gray-400 hover:text-green-400 hover:bg-green-500/10 px-4 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer">SOLO</button>
+                        <button data-chest="BLUE" class="chest-btn text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 px-4 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer">GROUPE</button>
+                        <button data-chest="GOLD" class="chest-btn text-gray-400 hover:text-yellow-400 hover:bg-yellow-500/10 px-4 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer">RAID</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-right w-full xl:w-auto border-t xl:border-t-0 border-white/5 pt-4 xl:pt-0">
+                <span class="text-[10px] uppercase font-mono-custom text-gray-500 font-bold block mb-1">Occurrences</span>
+                <span class="font-mono-custom text-2xl font-light text-white"><span id="mapCounter" class="font-bold text-[#d4af37]">0</span></span>
+            </div>
+        </div>
+
+        <div id="mapsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 z-10">
+            <div class="col-span-full py-32 text-center flex flex-col items-center justify-center">
+                <div class="w-8 h-8 border-2 border-white/10 border-t-[#d4af37] rounded-full animate-spin mb-4"></div>
+                <span class="font-mono-custom text-xs text-gray-500 tracking-widest uppercase">Initialisation des bases de données...</span>
+            </div>
+        </div>
+        
+        <div id="noResult" class="hidden text-center py-32 glass-panel rounded-2xl border-dashed">
+            <span class="text-4xl mb-4 block">📡</span>
+            <p class="text-sm text-gray-400 font-mono-custom tracking-wider uppercase">Aucune topographie ne correspond à ces paramètres.</p>
+        </div>
+    </main>
+
+    <div id="mapModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 lg:p-10 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-[#0a0a0e] border border-white/10 rounded-2xl w-full max-w-5xl max-h-[95vh] flex flex-col lg:flex-row shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden relative transform scale-95 transition-transform duration-300" id="modalContent">
+            
+            <button onclick="closeModal()" class="absolute top-4 right-4 w-8 h-8 bg-black/50 hover:bg-red-500/20 text-gray-400 hover:text-red-400 rounded-full flex items-center justify-center transition-all z-20 border border-white/10 backdrop-blur-md cursor-pointer">✕</button>
+
+            <div class="w-full lg:w-1/2 bg-[#050507] p-8 flex items-center justify-center border-b lg:border-b-0 lg:border-r border-white/5 relative overflow-hidden group">
+                <div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none"></div>
+                
+                <div class="absolute top-6 left-6 z-10 flex flex-col gap-1">
+                    <span class="text-[10px] text-[#d4af37] font-mono-custom font-bold uppercase tracking-widest">// MAP VIEWER_OS</span>
+                    <span id="modalIdLabel" class="text-xs text-gray-500 font-mono-custom"></span>
+                </div>
+                
+                <img id="modalImg" src="" alt="Minimap" class="w-full h-auto object-contain max-h-[50vh] lg:max-h-[70vh] drop-shadow-2xl relative z-10 transition-transform duration-500 group-hover:scale-105" onerror="this.src='https://placehold.co/500x500/050507/1f1f26?text=IMAGE+MANQUANTE'">
+            </div>
+
+            <div class="w-full lg:w-1/2 flex flex-col bg-gradient-to-b from-[#0a0a0e] to-[#050507] overflow-y-auto custom-scrollbar">
+                <div class="p-8 lg:p-10 flex-1">
+                    
+                    <div class="flex items-start justify-between mb-8 border-b border-white/5 pb-6">
+                        <div>
+                            <span id="modalType" class="inline-block px-2.5 py-1 bg-white/5 border border-white/10 rounded-md text-[9px] text-gray-400 font-mono-custom uppercase tracking-widest mb-3"></span>
+                            <h2 id="modalName" class="font-cinzel text-3xl md:text-4xl font-bold text-white tracking-wide"></h2>
+                        </div>
+                        <div class="flex flex-col items-end">
+                            <span class="text-[10px] text-gray-500 font-mono-custom uppercase tracking-widest mb-1">Niveau</span>
+                            <span id="modalTier" class="font-mono-custom text-2xl font-bold text-[#d4af37] bg-[#d4af37]/10 px-3 py-1 rounded-lg border border-[#d4af37]/20"></span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-8">
+                        
+                        <div>
+                            <h3 class="text-[10px] text-gray-400 font-mono-custom uppercase tracking-widest mb-4 flex items-center gap-2">
+                                <svg class="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                                Extracteurs de Butin
+                            </h3>
+                            <div id="modalChests" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+                        </div>
+
+                        <div id="modalDungeonsSection">
+                            <h3 class="text-[10px] text-gray-400 font-mono-custom uppercase tracking-widest mb-4 flex items-center gap-2">
+                                <svg class="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                                Structures PVE
+                            </h3>
+                            <div id="modalDungeons" class="flex flex-wrap gap-2"></div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-[10px] text-gray-400 font-mono-custom uppercase tracking-widest mb-4 flex items-center gap-2">
+                                <svg class="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                                Gisements Naturels
+                            </h3>
+                            <div id="modalResources" class="flex flex-wrap gap-2"></div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allMaps = [];
+        let currentTierFilter = "all";
+        let currentChestFilter = "all";
+
+        // Dictionnaires de traduction pour l'UI
+        const resourceLabels = { 'WOOD': 'Bois', 'ORE': 'Minerai', 'HIDE': 'Peau', 'FIBER': 'Fibre', 'STONE': 'Pierre' };
+        
+        const chestLabels = {
+            'GREEN': { name: 'Coffre Solo', style: 'border-green-500/30 text-green-400 bg-green-500/10' },
+            'BLUE': { name: 'Coffre Groupe', style: 'border-blue-500/30 text-blue-400 bg-blue-500/10' },
+            'GOLD': { name: 'Coffre Raid', style: 'border-yellow-500/40 text-yellow-400 bg-yellow-500/10 font-bold shadow-[inset_0_0_10px_rgba(234,179,8,0.1)]' }
+        };
+
+        const dungeonLabels = {
+            'DUNGEON_SOLO': { name: 'Donjon Solo', style: 'border-green-500/20 text-green-400 bg-green-500/5' },
+            'DUNGEON_GROUP': { name: 'Donjon Groupe', style: 'border-blue-500/20 text-blue-400 bg-blue-500/5' }
+        };
+
+        // Chargement du fichier JSON
+        async function loadAvalonData() {
+            try {
+                const response = await fetch('./maps.json');
+                const data = await response.json();
+                allMaps = data.maps;
+                applyFilters();
+            } catch (error) {
+                document.getElementById('mapsGrid').innerHTML = `
+                    <div class="col-span-full py-16 bg-red-500/10 border border-red-500/20 rounded-2xl text-center flex flex-col items-center justify-center">
+                        <svg class="w-10 h-10 text-red-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        <span class="font-mono-custom text-sm text-red-400">Erreur réseau : Fichier maps.json introuvable ou illisible.</span>
+                    </div>`;
+            }
+        }
+
+        // Rendu de la grille
+        function renderMaps(maps) {
+            const grid = document.getElementById('mapsGrid');
+            grid.innerHTML = "";
+            
+            // Animation du compteur
+            const counter = document.getElementById('mapCounter');
+            counter.innerText = maps.length;
+            
+            document.getElementById('noResult').style.display = maps.length === 0 ? 'block' : 'none';
+
+            maps.forEach(map => {
+                const isHideout = map.name.includes('--');
+                const isTier8 = map.tier === 8;
+                
+                // Indicateurs visuels (Pastilles de couleur pour les coffres)
+                let indicators = '';
+                if(map.chests.some(c => c.type === 'GREEN')) indicators += '<div class="w-2.5 h-2.5 rounded bg-green-500/80 border border-green-400 shadow-[0_0_8px_rgba(34,197,94,0.4)]"></div>';
+                if(map.chests.some(c => c.type === 'BLUE')) indicators += '<div class="w-2.5 h-2.5 rounded bg-blue-500/80 border border-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.4)]"></div>';
+                if(map.chests.some(c => c.type === 'GOLD')) indicators += '<div class="w-2.5 h-2.5 rounded bg-yellow-500/80 border border-yellow-400 shadow-[0_0_8px_rgba(234,179,8,0.4)]"></div>';
+
+                const card = `
+                    <div onclick="openModal(${map.id})" class="map-card rounded-2xl p-5 cursor-pointer flex flex-col justify-between min-h-[140px] relative overflow-hidden group">
+                        ${isTier8 ? '<div class="absolute top-0 right-0 w-16 h-16 overflow-hidden pointer-events-none"><div class="absolute bg-red-500/20 text-red-500 text-[8px] font-mono-custom font-bold text-center py-1 right-[-20px] top-[14px] w-[80px] transform rotate-45 border-y border-red-500/30">DANGER</div></div>' : ''}
+                        
+                        <div>
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-[9px] font-mono-custom text-gray-500 tracking-widest uppercase bg-black/50 px-2 py-1 rounded border border-white/5">${isHideout ? 'Hideout Area' : 'Route Standard'}</span>
+                            </div>
+                            <h2 class="font-cinzel text-base font-bold text-gray-200 group-hover:text-white truncate transition-colors">${map.name}</h2>
+                        </div>
+                        
+                        <div class="flex items-center justify-between border-t border-white/5 pt-4 mt-4">
+                            <span class="text-xs font-mono-custom font-bold px-2 py-1 rounded bg-black/40 border border-white/10 ${isTier8 ? 'text-red-400' : 'text-[#d4af37]'}">Tier ${map.tier}</span>
+                            <div class="flex gap-1.5">${indicators}</div>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += card;
+            });
+        }
+
+        // Gestion de la modale
+        function openModal(mapId) {
+            const map = allMaps.find(m => m.id === mapId);
+            if (!map) return;
+
+            // Textes basiques
+            document.getElementById('modalName').innerText = map.name;
+            document.getElementById('modalTier').innerText = `T${map.tier}`;
+            document.getElementById('modalType').innerText = map.name.includes('--') ? 'Zone Sécurisée (Hideout)' : 'Route d\'Exploration';
+            document.getElementById('modalIdLabel').innerText = `ID_${map.id.toString().padStart(4, '0')}`;
+            
+            // L'IMAGE POINTE MAINTENANT À LA RACINE (MÊME DOSSIER QUE INDEX.HTML)
+            document.getElementById('modalImg').src = `./${map.image}`;
+
+            // Rendu des Coffres
+            const chestsHtml = map.chests.length > 0 ? map.chests.map(c => `
+                <div class="flex items-center justify-between border ${chestLabels[c.type]?.style} px-4 py-3 rounded-xl text-xs font-mono-custom">
+                    <span>${chestLabels[c.type]?.name || c.type}</span>
+                    <span class="opacity-60 flex gap-2"><span>Taille: ${c.size}</span> <span>|</span> <span>Qté: <strong class="text-white">x${c.count}</strong></span></span>
+                </div>
+            `).join('') : '<span class="text-xs text-gray-600 font-mono-custom bg-black/20 px-4 py-2 rounded-lg border border-white/5">Aucun coffre détecté</span>';
+            document.getElementById('modalChests').innerHTML = chestsHtml;
+
+            // Rendu des Donjons
+            if(map.dungeons && map.dungeons.length > 0) {
+                document.getElementById('modalDungeonsSection').classList.remove('hidden');
+                document.getElementById('modalDungeons').innerHTML = map.dungeons.map(d => `
+                    <span class="border ${dungeonLabels[d.type]?.style || 'border-gray-500/20 text-gray-400 bg-gray-500/5'} px-3 py-1.5 rounded-lg text-xs font-mono-custom">
+                        ${dungeonLabels[d.type]?.name || d.type} (x${d.count})
+                    </span>
+                `).join('');
+            } else {
+                document.getElementById('modalDungeonsSection').classList.add('hidden');
+            }
+
+            // Rendu des Ressources
+            const resourcesHtml = map.resources.length > 0 ? map.resources.map(r => `
+                <span class="bg-black/40 border border-white/10 px-3 py-1.5 rounded-lg text-xs font-mono-custom text-gray-300 flex items-center gap-2">
+                    ${resourceLabels[r.type] || r.type} 
+                    <span class="text-[10px] text-gray-500 px-1.5 bg-white/5 rounded">${r.size}</span>
+                </span>
+            `).join('') : '<span class="text-xs text-gray-600 font-mono-custom bg-black/20 px-4 py-2 rounded-lg border border-white/5">Zone stérile</span>';
+            document.getElementById('modalResources').innerHTML = resourcesHtml;
+
+            // Affichage avec animation
+            const modal = document.getElementById('mapModal');
+            const content = document.getElementById('modalContent');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('mapModal');
+            const content = document.getElementById('modalContent');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        // Échappe ferme la modale
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") closeModal();
+        });
+
+        // Filtrage des données
+        function applyFilters() {
+            const searchString = document.getElementById('searchBar').value.toLowerCase().trim();
+            const filtered = allMaps.filter(map => {
+                const matchesSearch = map.name.toLowerCase().includes(searchString);
+                const matchesTier = currentTierFilter === "all" || map.tier.toString() === currentTierFilter;
+                const matchesChest = currentChestFilter === "all" || map.chests.some(c => c.type === currentChestFilter);
+                return matchesSearch && matchesTier && matchesChest;
+            });
+            renderMaps(filtered);
+        }
+
+        // Mise à jour visuelle des boutons filtres
+        function updateButtonVisuals(containerId, activeButtonClass) {
+            document.querySelectorAll(`#${containerId} button`).forEach(btn => {
+                btn.classList.remove('active', 'bg-white/10', 'text-white');
+                btn.classList.add('text-gray-400');
+            });
+            const activeBtn = document.querySelector(`#${containerId} button[data-${containerId.replace('Filters', '')}="${activeButtonClass}"]`);
+            if(activeBtn) {
+                activeBtn.classList.remove('text-gray-400');
+                activeBtn.classList.add('active');
+            }
+        }
+
+        // Écouteurs d'événements UI
+        document.getElementById('searchBar').addEventListener('input', applyFilters);
+        
+        document.getElementById('tierFilters').addEventListener('click', (e) => {
+            if (e.target.tagName !== 'BUTTON') return;
+            currentTierFilter = e.target.dataset.tier;
+            updateButtonVisuals('tierFilters', currentTierFilter);
+            applyFilters();
+        });
+
+        document.getElementById('chestFilters').addEventListener('click', (e) => {
+            if (e.target.tagName !== 'BUTTON') return;
+            currentChestFilter = e.target.dataset.chest;
+            updateButtonVisuals('chestFilters', currentChestFilter);
+            applyFilters();
+        });
+
+        // Démarrage de l'application
+        loadAvalonData();
+    </script>
+</body>
+</html>
